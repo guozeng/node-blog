@@ -13,7 +13,7 @@ const app = express()
 app.use(compression())
 app.use(favicon(resolve('../public/favicon.ico')))
 
-const serve = (path) => {
+const serve = path => {
     return express.static(resolve(path), {
         maxAge: 1000 * 60 * 60 * 24 * 30
     })
@@ -57,7 +57,7 @@ function render(req, res) {
     })
 }
 
-const templatePath = resolve('../public/index.template.html')
+const templatePath = resolve('../public/index.template.htm')
 const template = fs.readFileSync(templatePath, 'utf-8')
 const bundle = require('../dist/vue-ssr-server-bundle.json')
 const clientManifest = require('../dist/vue-ssr-client-manifest.json') // 将js文件注入到页面中
@@ -66,20 +66,21 @@ const renderer = createRenderer(bundle, {
     clientManifest
 })
 
-app.use(express.static('dist', {
-    etag: false,
-    maxAge: 1000 * 60 * 60 * 24 * 365, // 缓存一年
-})) // 将dist设为根目录
+app.use(
+    express.static('dist', {
+        etag: false,
+        maxAge: 1000 * 60 * 60 * 24 * 365 // 缓存一年
+    })
+) // 将dist设为根目录
 
 initArticleConfig() // 初始化数据库相关配置
 config(app) // 基本配置
 interface(app) // 处理接口
 
-const { host, port } = require('../env') 
+const { host, port } = require('../env')
 
 app.listen(port, host, () => {
-    console.log(`server started at ${host}:${ port }`)
+    console.log(`server started at ${host}:${port}`)
 })
 
 app.get('*', render)
-

@@ -3,11 +3,11 @@ const express = require('express')
 const { config, interface } = require('./base-server')
 const { createBundleRenderer } = require('vue-server-renderer')
 const devServer = require('../build/setup-dev-server')
-const resolve = (file) => path.resolve(__dirname, file)
+const resolve = file => path.resolve(__dirname, file)
 const { initArticleConfig } = require('./utils/article')
 const favicon = require('serve-favicon')
 const app = express()
-const serve = (path) => {
+const serve = path => {
     return express.static(resolve(path))
 }
 
@@ -49,24 +49,20 @@ function render(req, res) {
 
 let renderer
 let readyPromise
-const templatePath = resolve('../public/index.template.html')
+const templatePath = resolve('../public/index.template.htm')
 
-readyPromise = devServer(
-    app,
-    templatePath,
-    (bundle, options) => {
-        renderer = createRenderer(bundle, options)
-    }
-)
+readyPromise = devServer(app, templatePath, (bundle, options) => {
+    renderer = createRenderer(bundle, options)
+})
 
 initArticleConfig() // 初始化数据库相关配置
 config(app) // 基本配置
 interface(app) // 处理接口
 
-const { host, port } = require('../env') 
+const { host, port } = require('../env')
 
 app.listen(port, () => {
-    console.log(`server started at ${host}:${ port }`)
+    console.log(`server started at ${host}:${port}`)
 })
 
 app.get('*', (req, res) => {

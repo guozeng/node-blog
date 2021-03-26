@@ -14,7 +14,7 @@ const serverConfig = require('./webpack.server.config')
 const readFile = (fs, file) => {
     try {
         return fs.readFileSync(path.join(clientConfig.output.path, file), 'utf-8')
-    } catch (e) { }
+    } catch (e) {}
 }
 
 module.exports = function setupDevServer(app, templatePath, cb) {
@@ -46,15 +46,9 @@ module.exports = function setupDevServer(app, templatePath, cb) {
 
     // modify client config to work with hot middleware
     clientConfig.mode = 'development'
-    clientConfig.entry.app = [
-        'webpack-hot-middleware/client',
-        clientConfig.entry.app
-    ]
+    clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app]
     clientConfig.output.filename = '[name].js'
-    clientConfig.plugins.push(
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
-    )
+    clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin(), new webpack.NoEmitOnErrorsPlugin())
 
     // dev middleware
     const clientCompiler = webpack(clientConfig)
@@ -69,9 +63,7 @@ module.exports = function setupDevServer(app, templatePath, cb) {
         stats.errors.forEach(err => console.error(err))
         stats.warnings.forEach(err => console.warn(err))
         if (stats.errors.length) return
-        clientManifest = JSON.parse(
-            readFile(devMiddleware.fileSystem, 'vue-ssr-client-manifest.json')
-        )
+        clientManifest = JSON.parse(readFile(devMiddleware.fileSystem, 'vue-ssr-client-manifest.json'))
         update()
     })
 
